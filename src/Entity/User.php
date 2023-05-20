@@ -34,6 +34,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'User', targetEntity: Customer::class, orphanRemoval: true)]
     private Collection $customers;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Details $details = null;
+
     public function __construct()
     {
         $this->customers = new ArrayCollection();
@@ -135,6 +138,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $customer->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDetails(): ?Details
+    {
+        return $this->details;
+    }
+
+    public function setDetails(?Details $details): self
+    {
+        $this->details = $details;
 
         return $this;
     }

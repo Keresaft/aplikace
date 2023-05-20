@@ -17,6 +17,9 @@ class Customer
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Details $details = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -30,6 +33,18 @@ class Customer
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getDetails(): ?Details
+    {
+        return $this->details;
+    }
+
+    public function setDetails(?Details $details): self
+    {
+        $this->details = $details;
 
         return $this;
     }
