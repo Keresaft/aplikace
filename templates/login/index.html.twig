@@ -6,7 +6,7 @@
             {% if error %}
                 <div class="mb-4 text-red-500">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
             {% endif %}
-            <h1 class="text-3xl mb-6 text-center">Login</h1>
+            <h1 class="text-3xl mb-6 text-center">Přihlásit se</h1>
 
             <form action="{{ path('app_login') }}" method="post">
                 <div class="mb-4">

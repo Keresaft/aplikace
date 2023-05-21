@@ -5,7 +5,7 @@
 {% block body %}
     <div class="flex justify-center items-center h-screen">
         <div class="w-full max-w-md">
-            <h1 class="text-3xl mb-6 text-center">Register</h1>
+            <h1 class="text-3xl mb-6 text-center">Registrovat se</h1>
 
             {{ form_start(registrationForm) }}
             <div class="mb-4">
@@ -23,10 +23,9 @@
 
             <div class="mb-4">
                 {{ form_row(registrationForm.agreeTerms, {
-                    'label_attr': {'class': 'inline-flex items-center'},
+                    'label_attr': {'class': 'inline-flex items-center mr-2'},
                     'attr': {'class': 'mr-2'}
                 }) }}
-                <label for="{{ registrationForm.agreeTerms.vars.id }}" class="inline-flex items-center">I agree to the terms</label>
             </div>
 
             <div class="text-center">

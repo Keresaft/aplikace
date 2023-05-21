@@ -1,0 +1,24 @@
+<header class="bg-gray-800">
+    <nav class="container mx-auto px-4 py-2">
+        <ul class="flex items-center justify-between">
+            <li class="text-white flex items-center justify-center mr-10">
+                <h1>Fakturační systém</h1>
+            </li>
+            {% if app.user != null %}
+            <li class="text-white flex items-center justify-center ml-auto">
+                <a href="{{ path('lucky_number') }}" class="hover:text-gray-300">Lucky</a>
+                <span class="text-gray-300 mx-2">|</span>
+                <a href="{{ path('lucky_number') }}" class="hover:text-gray-300">Lucky</a>
+            </li>
+            {% endif %}
+            <li class="text-white ml-auto">
+                {% if app.user != null %}
+                    <a href="{{ path('app_logout') }}" class="hover:text-gray-300 ml-4">Odhlásit se</a>
+                {% elseif app.user == null %}
+                    <a href="{{ path('app_register') }}" class="hover:text-gray-300 ml-4">Registrovat se</a>
+                    <a href="{{ path('app_login') }}" class="hover:text-gray-300 ml-4">Přihlásit se</a>
+                {% endif %}
+            </li>
+        </ul>
+    </nav>
+</header>
