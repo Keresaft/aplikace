@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Fakturační systém - Zákazníci{% endblock %}
+
+{% block body %}
+    <div class="flex justify-between items-center">
+        <h1 class="text-3xl mb-4 text-center flex-grow mt-4">Zákazníci</h1>
+    </div>
+
+    <div class="flex flex-wrap justify-center">
+        {% for customer in customers %}
+            <div class="w-full max-w-sm bg-gray-100 rounded-lg shadow-lg mx-4 my-4">
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold">{{ customer.getDetails().getName() }}</h3>
+                    <p class="mt-2">{{ customer.getDetails().getIco() }}</p>
+                    <p class="mt-2">{{ customer.getDetails().getDico() }}</p>
+                    <p class="mt-2">{{ customer.getDetails().getAddress() }}</p>
+                    <p class="mt-2">{{ customer.getDetails().getCity() }}</p>
+                    <p class="mt-2">{{ customer.getDetails().getzipCode() }}</p>
+                    <p class="mt-2">{{ customer.getDetails().phoneNumber() }}</p>
+                    <form action="{{ path('customer_delete', {'id': customer.id}) }}" method="post" class="mt-4">
+                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+                            Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+
+    <div class="flex justify-center items-center">
+        <a href="{{ path('customer_new') }}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-10">Přidat zákazníka</a>
+    </div>
+
+{% endblock %}
+

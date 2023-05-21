@@ -2,6 +2,68 @@
 
 {% block title %}Lucky{% endblock %}
 
+
 {% block body %}
-    {{ form(form) }}
+    <div class="flex justify-center">
+        <div class="w-1/2">
+            {{ form_start(form) }}
+            <div class="mb-4">
+                {{ form_row(form.details.ico, {
+                    'label': 'IČO:',
+                    'attr': {'class': 'w-full p-2 border border-gray-300 rounded'}
+                }) }}
+            </div>
+
+            <div class="mb-4">
+                {{ form_row(form.details.dico, {
+                    'label': 'DIČO:',
+                    'attr': {'class': 'w-full p-2 border border-gray-300 rounded'}
+                }) }}
+            </div>
+
+            <div class="mb-4">
+                {{ form_row(form.details.name, {
+                    'label': 'Name:',
+                    'attr': {'class': 'w-full p-2 border border-gray-300 rounded'}
+                }) }}
+            </div>
+
+            <div class="mb-4">
+                {{ form_row(form.details.address, {
+                    'label': 'Adresa:',
+                    'attr': {'class': 'w-full p-2 border border-gray-300 rounded'}
+                }) }}
+            </div>
+
+            <div class="mb-4">
+                {{ form_row(form.details.city, {
+                    'label': 'Město:',
+                    'attr': {'class': 'w-full p-2 border border-gray-300 rounded'}
+                }) }}
+            </div>
+
+            <div class="mb-4">
+                {{ form_row(form.details.zipCode, {
+                    'label': 'PSČ:',
+                    'attr': {'class': 'w-full p-2 border border-gray-300 rounded'}
+                }) }}
+            </div>
+
+            <div class="mb-4">
+                {{ form_row(form.details.phoneNumber, {
+                    'label': 'Telefonní číslo:',
+                    'attr': {'class': 'w-full p-2 border border-gray-300 rounded'}
+                }) }}
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                    Register
+                </button>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+
 {% endblock %}

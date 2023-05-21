@@ -1,8 +1,44 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Lucky{% endblock %}
+{% block title %}Fakturační systém - Přehled{% endblock %}
 
 {% block body %}
-    <h1>Your number of id is {{ customerCount }}</h1>
+    <h1 class="text-3xl mb-4 text-center flex-grow mt-4">{{ email }}</h1>
+    <div class="flex gap-4 mx-4 my-4">
+        <div class="w-full max-w-sm bg-gray-100 rounded-lg shadow-lg">
+            {% if details != null %}
+                <div class="p-4">
+                    <h2 class="text-lg font-semibold">Fakturační údaje</h2>
+                    <h3 class="text-lg font-semibold">{{ details.getName() }}</h3>
+                    <p class="mt-2">{{ details.getIco() }}</p>
+                    <p class="mt-2">{{ details.getDico() }}</p>
+                    <p class="mt-2">{{ details.getAddress() }}</p>
+                    <p class="mt-2">{{ details.getCity() }}</p>
+                    <p class="mt-2">{{ details.getzipCode() }}</p>
+                    <p class="mt-2">{{ details.phoneNumber() }}</p>
+                    <form method="post" class="mt-4">
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                            Změnit
+                        </button>
+                    </form>
+                </div>
+            {% endif %}
+            {% if details == null %}
+                <form action="{{ path('user_detail') }}" method="post" class="mt-4">
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                        Nastavit fakturační údaje
+                    </button>
+                </form>
+            {% endif %}
+        </div>
 
+        <div class="w-full max-w-sm bg-gray-100 rounded-lg shadow-lg ml-4">
+            <div class="p-4">
+                <h2 class="text-lg font-semibold">Počet zákazníků</h2>
+                <div class="bg-white rounded-lg shadow-lg p-4 mt-2">
+                    <p class="text-2xl font-semibold text-center">{{ customerCount }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
