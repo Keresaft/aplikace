@@ -31,7 +31,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\OneToMany(mappedBy: 'User', targetEntity: Customer::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Customer::class, orphanRemoval: true)]
     private Collection $customers;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
@@ -153,4 +153,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+    public function getCustomerCount(): int
+    {
+        return $this->customers->count();
+    }
+
 }
