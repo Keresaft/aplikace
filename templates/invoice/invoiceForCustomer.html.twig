@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Fakturační systém - Faktury{% endblock %}
+
+{% block body %}
+    <div class="flex justify-between items-center">
+        <h1 class="text-3xl mb-4 text-center flex-grow mt-4">Faktury {{ customer }}</h1>
+    </div>
+
+    <div class="flex flex-wrap justify-center">
+        {% for invoice in invoices %}
+            <div class="w-full max-w-sm bg-gray-100 rounded-lg shadow-lg mx-4 my-4">
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold">{{ invoice.service() }}</h3>
+                    <p class="mt-2">Datum splatnosti: {{ invoice.dueDate()|date('Y-m-d') }}</p>
+                    <p class="mt-2">Datum vystavení: {{ invoice.creationDate()|date('Y-m-d') }}</p>
+                    <p class="mt-2">Částka: {{ invoice.price() }} Kč</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+

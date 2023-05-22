@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nová faktura{% endblock %}
+
+
+{% block body %}
+    <div class="flex justify-between items-center">
+        <h1 class="text-3xl mb-4 text-center flex-grow mt-4">Nová faktura</h1>
+    </div>
+    <div class="flex justify-center">
+        <div class="w-1/2">
+            {{ form_start(form) }}
+            <div class="mb-4">
+                {{ form_row(form.service, {
+                    'label': 'Služba:',
+                    'attr': {'class': 'w-full p-2 border border-gray-300 rounded'}
+                }) }}
+            </div>
+
+            <div class="mb-4">
+                {{ form_row(form.price, {
+                    'label': 'Cena:',
+                    'attr': {'class': 'w-full p-2 border border-gray-300 rounded'}
+                }) }}
+            </div>
+
+            <div class="mb-4">
+                {{ form_row(form.creationDate, {
+                    'label': 'Datum vystavení faktury:',
+                    'attr': {'class': 'w-full pt-1 border border-gray-300 rounded', 'style': 'width: 100%'}
+                }) }}
+            </div>
+
+            <div class="mb-4">
+                {{ form_row(form.dueDate, {
+                    'label': 'Datum splatnosti faktury:',
+                    'attr': {'class': 'w-full pt-1 border border-gray-300 rounded', 'style': 'width: 100%'}
+                }) }}
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                    Vytvořit
+                </button>
+            </div>
+
+            {{ form_end(form) }}
+
+
+        </div>
+    </div>
+
+{% endblock %}

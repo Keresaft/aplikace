@@ -18,11 +18,31 @@
                     <p class="mt-2">{{ customer.getDetails().getCity() }}</p>
                     <p class="mt-2">{{ customer.getDetails().getzipCode() }}</p>
                     <p class="mt-2">{{ customer.getDetails().phoneNumber() }}</p>
-                    <form action="{{ path('customer_delete', {'id': customer.id}) }}" method="post" class="mt-4">
-                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
-                            Delete
-                        </button>
-                    </form>
+                    <div class="mt-4">
+                        <form action="{{ path('customer_delete', {'id': customer.id}) }}" method="post" class="inline-block">
+                            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+                                Smazat
+                            </button>
+                        </form>
+                        <form method="post" class="inline-block">
+                            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                                Upravit
+                            </button>
+                        </form>
+                    </div>
+                    <div class="mt-4">
+                        <form action="{{ path('invoice_new', {'id': customer.id}) }}" method="post" class="inline-block">
+                            <button type="submit" class="bg-blue-900 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                Vytvořit faktury
+                            </button>
+                        </form>
+                        <form action="{{ path('invoice_list', {'id': customer.id}) }}" method="post" class="inline-block">
+                            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                                Zobrazit faktury
+                            </button>
+                        </form>
+                    </div>
+
                 </div>
             </div>
         {% endfor %}

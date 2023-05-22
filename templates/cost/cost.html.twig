@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Fakturační systém - Náklady{% endblock %}
+
+{% block body %}
+    <div class="flex justify-between items-center">
+        <h1 class="text-3xl mb-4 text-center flex-grow mt-4">Náklady</h1>
+    </div>
+
+    <div class="flex flex-wrap justify-center">
+        {% for cost in costs %}
+            <div class="w-full max-w-sm bg-gray-100 rounded-lg shadow-lg mx-4 my-4">
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold">{{ cost.getItem() }}</h3>
+                    <p class="mt-2">Č. dokladu: {{ cost.getDocumentNumber()}}</p>
+                    <p class="mt-2">Č. transakce: {{ cost.getTransactionNumber()}}</p>
+                    <p class="mt-2">Cena: {{ cost.getCost() }} Kč</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+
+    <div class="flex justify-center items-center">
+        <a href="{{ path('cost_new') }}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-10">Přidat náklad</a>
+    </div>
+
+{% endblock %}
+

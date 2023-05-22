@@ -37,9 +37,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Details $details = null;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Cost::class, orphanRemoval: true)]
+    private Collection $costs;
+
     public function __construct()
     {
         $this->customers = new ArrayCollection();
+        $this->costs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -156,6 +160,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getCustomerCount(): int
     {
         return $this->customers->count();
+    }
+
+    /**
+     * @return Collection<int, Cost>
+     */
+    public function getCosts(): Collection
+    {
+        return $this->costs;
+    }
+
+    public function addCost(Cost $cost): self
+    {
+        if (!$this->costs->contains($cost)) {
+            $this->costs->add($cost);
+            $cost->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCost(Cost $cost): self
+    {
+        if ($this->costs->removeElement($cost)) {
+            // set the owning side to null (unless already changed)
+            if ($cost->getUser() === $this) {
+                $cost->setUser(null);
+            }
+        }
+
+        return $this;
     }
 
 }

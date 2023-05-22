@@ -21,25 +21,17 @@ class UserController extends AbstractController
     }
 
     #[Route('/lucky/number', name: 'lucky_number')]
-    public function number(): Response
-    {
-        $number = random_int(0, 100);
-        return $this->render('lucky/number.html.twig', [
-            'number' => $number,
-        ]);
-
-    }
-
-    #[Route('/lucky/number', name: 'lucky_number')]
     public function numberOfCustormers(): Response
     {
         /** @var User $user */
         $user = $this->getUser();
         $customerCount = $user->getCustomerCount();
+        $costsCount = $user ->getCosts() ->count();
         return $this->render('lucky/number.html.twig', [
             'customerCount' => $customerCount,
             'email' => $user -> getEmail(),
             'details' => $user ->getDetails(),
+            'costsCount' => $costsCount,
         ]);
     }
 

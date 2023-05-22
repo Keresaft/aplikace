@@ -44,7 +44,7 @@ class CustomerController extends AbstractController
     {
         /** @var User $user */
         $user = $this->getUser();
-        /** @var Customer $customer */
+        /** @var Customer $customers */
         $customers = $user->getCustomers();
 
 
@@ -58,7 +58,5 @@ class CustomerController extends AbstractController
     {
         $this->customerRepository->remove($customer, true);
         return $this->redirectToRoute('customer');
-
     }
-
 }
