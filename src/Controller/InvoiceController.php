@@ -28,6 +28,9 @@ class InvoiceController extends AbstractController
     #[Route('/invoice/new/{id}', name: 'invoice_new', methods: ['POST'])]
     public function new(Request $request, Customer $customer)
     {
+        if($customer -> getUser() !== $this->getUser()){
+            throw $this->createAccessDeniedException();
+        }
         $invoice = new Invoice();
         $form = $this->createForm(InvoiceType::class, $invoice);
         $form->handleRequest($request);
@@ -71,6 +74,9 @@ class InvoiceController extends AbstractController
     #[Route('/invoice/edit/{id}', name: 'invoice_edit', methods: ['POST'])]
     public function edit(Invoice $invoice, Request $request)
     {
+        if($invoice->getCustomerID()->getUser() !== $this->getUser()){
+            throw $this->createAccessDeniedException();
+        }
         $form = $this->createForm(InvoiceType::class, $invoice);
         $form->handleRequest($request);
         $customer = $invoice -> getCustomerID();
@@ -89,6 +95,9 @@ class InvoiceController extends AbstractController
     #[Route('/invoice/gen/{id}', name: 'pdf_gen')]
     public function genPdf(Invoice $invoice):Response
     {
+        if($invoice->getCustomerID()->getUser() !== $this->getUser()){
+            throw $this->createAccessDeniedException();
+        }
         $html = $this->render('invoice/pdfGen.html.twig', [
             'invoice' => $invoice,
         ]);

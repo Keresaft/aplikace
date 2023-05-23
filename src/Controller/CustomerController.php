@@ -63,6 +63,9 @@ class CustomerController extends AbstractController
     #[Route('/customer/edit/{id}', name: 'customer_edit')]
     public function edit(Customer $customer, Request $request)
     {
+        if($customer -> getUser() !== $this->getUser()){
+            throw $this->createAccessDeniedException();
+        }
         $form = $this->createForm(CustomerType::class, $customer);
         $form->handleRequest($request);
 

@@ -60,6 +60,9 @@ class CategoryController extends AbstractController
     #[Route('/category/edit/{id}', name: 'category_edit')]
     public function editCategory(Category $category, Request $request)
     {
+        if($category->getUser() !== $this->getUser()){
+            throw $this->createAccessDeniedException();
+        }
         $form = $this->createForm(CategoryType::class, $category);
         $form->handleRequest($request);
 

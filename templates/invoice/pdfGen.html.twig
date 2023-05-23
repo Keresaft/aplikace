@@ -44,23 +44,23 @@
         <tr>
             <td class="user-details">
                 <h3>Dodavatel</h3>
-                <p><strong>Name: {{ invoice.userJson.name }}</strong></p>
+                <p><strong>Jméno: {{ invoice.userJson.name }}</strong></p>
                 <p>ICO:{{ invoice.userJson.ico }}</p>
                 <p>DICO: {{ invoice.userJson.dico }}</p>
-                <p>Address: {{ invoice.userJson.address }}</p>
-                <p>City: {{ invoice.userJson.city }}</p>
-                <p>Zip Code: {{ invoice.userJson.zipCode }}</p>
-                <p><strong>Phone Number:</strong> {{ invoice.userJson.phoneNumber }}</p>
+                <p>Adresa: {{ invoice.userJson.address }}</p>
+                <p>Město: {{ invoice.userJson.city }}</p>
+                <p>PSC: {{ invoice.userJson.zipCode }}</p>
+                <p><strong>Telefonní číslo:</strong> {{ invoice.userJson.phoneNumber }}</p>
             </td>
             <td class="customer-details">
                 <h3>Odběratel</h3>
-                <p><strong>Name:</strong> {{ invoice.customerJson.name }}</p>
+                <p><strong>Jméno:</strong> {{ invoice.customerJson.name }}</p>
                 <p>ICO: {{ invoice.customerJson.ico }}</p>
                 <p>DICO: {{ invoice.customerJson.dico }}</p>
-                <p>Address: {{ invoice.customerJson.address }}</p>
-                <p>City: {{ invoice.customerJson.city }}</p>
-                <p>Zip Code: {{ invoice.customerJson.zipCode }}</p>
-                <p><strong>Phone Number:</strong> {{ invoice.customerJson.phoneNumber }}</p>
+                <p>Adresa: {{ invoice.customerJson.address }}</p>
+                <p>Město: {{ invoice.customerJson.city }}</p>
+                <p>PSC: {{ invoice.customerJson.zipCode }}</p>
+                <p><strong>Telefonní číslo:</strong> {{ invoice.customerJson.phoneNumber }}</p>
             </td>
         </tr>
         <tr class="service-details">
@@ -83,7 +83,7 @@
                 <h3>Vystavil</h3>
                 <p><strong>Firma: </strong> {{ invoice.userJson.name }}</p>
                 <p><strong>Email:</strong> {{ invoice.getCustomerID().getUser().getUserIdentifier() }}</p>
-                <p>Zapsán v živnostenském rejstříku</p>
+                <p>Zapsán v živnostenském rejstříku. Magistrát {{ invoice.userJson.city }}</p>
             </td>
         </tr>
     </table>

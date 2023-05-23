@@ -29,7 +29,7 @@ class DetailsType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('dico', TextType::class, [
+            ->add('dico', TextType::class, ['required' => false,
                 'constraints' => [
                     new Length([
                         'min' => 3,

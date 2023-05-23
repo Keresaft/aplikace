@@ -22,12 +22,10 @@ class Category
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\ManyToMany(targetEntity: Cost::class, inversedBy: 'categories', )]
-    private Collection $costs;
 
     public function __construct()
     {
-        $this->costs = new ArrayCollection();
+
     }
 
     public function getId(): ?int
@@ -59,27 +57,6 @@ class Category
         return $this;
     }
 
-    /**
-     * @return Collection<int, Cost>
-     */
-    public function getCosts(): Collection
-    {
-        return $this->costs;
-    }
 
-    public function addCost(Cost $cost): self
-    {
-        if (!$this->costs->contains($cost)) {
-            $this->costs->add($cost);
-        }
 
-        return $this;
-    }
-
-    public function removeCost(Cost $cost): self
-    {
-        $this->costs->removeElement($cost);
-
-        return $this;
-    }
 }

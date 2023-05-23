@@ -60,6 +60,9 @@ class UserController extends AbstractController
     #[Route('/user/detail/edit/{id}', name: 'user_detail_edit')]
     public function detailEdit(User $user, Request $request)
     {
+        if($user !== $this->getUser()){
+            throw $this->createAccessDeniedException();
+        }
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 

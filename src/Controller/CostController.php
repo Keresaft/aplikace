@@ -62,6 +62,9 @@ class CostController extends AbstractController
     #[Route('/cost/edit/{id}', name: 'cost_edit')]
     public function editCost(Cost $cost, Request $request)
     {
+        if($cost -> getUser()!== $this->getUser()){
+            throw $this->createAccessDeniedException();
+        }
         $form = $this->createForm(CostType::class, $cost);
         $form->handleRequest($request);
 
@@ -80,6 +83,9 @@ class CostController extends AbstractController
     #[Route('/cost/{id}/category', name: 'cost_category')]
     public function costCategory(Cost $cost, Request $request)
     {
+        if($cost ->getUser() !== $this->getUser()){
+            throw $this->createAccessDeniedException();
+        }
         $costRequest = new Cost();
         foreach ($cost->getCategories() as $category){
             $costRequest->addCategory($category);
@@ -90,9 +96,10 @@ class CostController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var Cost $data */
             $data = $form->getData();
-            foreach ($data->getCategories() as $category){
-               $cost -> addCategory($category);
-            }
+//            foreach ($data->getCategories() as $category){
+//               $cost -> addCategory($category);
+//            }
+            $cost ->setCategories($data->getCategories());
             $this->costRepository->save($cost, true);
             return $this->redirectToRoute('costs');
         }

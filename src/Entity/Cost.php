@@ -38,8 +38,9 @@ class Cost
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $purchasedFrom = null;
 
-    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'costs', cascade: ['persist'], fetch: "EAGER")]
+    #[ORM\ManyToMany(targetEntity: Category::class)]
     private Collection $categories;
+
 
     public function __construct()
     {
@@ -143,31 +144,25 @@ class Cost
         return $this->categories;
     }
 
-    public function setCategories(Collection $categories): self
-    {
-        /** @var Category $category */
-        foreach ($categories as $category) {
-            $category->addCost($this);
-        }
-        $this->categories = $categories;
-        return $this;
-    }
-
     public function addCategory(Category $category): self
     {
         if (!$this->categories->contains($category)) {
             $this->categories->add($category);
-            $category->addCost($this);
         }
 
+        return $this;
+    }
+
+    /** @param Collection<int, Category> $categories*/
+    public function setCategories(Collection $categories): self
+    {
+        $this ->categories = $categories;
         return $this;
     }
 
     public function removeCategory(Category $category): self
     {
-        if ($this->categories->removeElement($category)) {
-            $category->removeCost($this);
-        }
+        $this->categories->removeElement($category);
 
         return $this;
     }

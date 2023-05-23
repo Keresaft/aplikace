@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Invoice;
 use App\Entity\Payment;
 use App\Form\PaymentType;
+use App\Repository\InvoiceRepository;
 use App\Repository\PaymentRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,7 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class PaymentController extends AbstractController
 {
-    public function __construct(private readonly PaymentRepository $paymentRepository)
+    public function __construct(private readonly PaymentRepository $paymentRepository, private readonly InvoiceRepository $invoiceRepository)
     {
     }
 
@@ -38,20 +39,24 @@ class PaymentController extends AbstractController
     }
 
 
-    private function paymentStatus (Invoice $invoice){
+    private function paymentStatus (Invoice $invoice, Payment $payment):Invoice{
         $amount = 0;
         foreach ($invoice->getPayments() as $payment) {
             $amount += $payment->getPaymentAmount();
         }
+        $amount -= $payment->getPaymentAmount();
         if ($invoice ->getPrice() > $amount){
             $invoice->setPaymentStatus(false);
-            dd($invoice, $amount);
 
         }
+        return $invoice;
     }
     #[Route('/payment/new/{id}', name: 'payment_new', methods: ['POST'])]
     public function newPayment(Invoice $invoice, Request $request)
     {
+        if($invoice->getCustomerID()->getUser() !== $this->getUser()){
+            throw $this->createAccessDeniedException();
+        }
         $payment = new Payment();
         $form = $this->createForm(PaymentType::class, $payment);
         $form->handleRequest($request);
@@ -78,6 +83,9 @@ class PaymentController extends AbstractController
     #[Route('/payment/list/{id}', name: 'payment_list')]
     public function listById(Invoice $invoice): Response
     {
+        if($invoice->getCustomerID()->getUser() !== $this->getUser()){
+            throw $this->createAccessDeniedException();
+        }
         /** @var Payment $payments */
         $payments = $invoice->getPayments();
         return $this->render('payment/paymentList.html.twig', [
@@ -90,14 +98,18 @@ class PaymentController extends AbstractController
     public function deletePayment(Payment $payment): Response
     {
         $invoice = $payment->getInvoice();
+        $invoice = $this->paymentStatus($invoice, $payment);
         $this -> paymentRepository ->remove($payment, true);
-        $this->paymentStatus($invoice);
+        $this -> invoiceRepository ->save($invoice, true);
         return $this->redirectToRoute('payment_list', ['id' => $invoice->getId()]);
     }
 
     #[Route('/payment/edit/{id}', name: 'payment_edit', methods: ['POST'])]
     public function editPayment(Payment $payment, Request $request)
     {
+        if($payment->getInvoice()->getCustomerID()->getUser() !== $this->getUser()){
+            throw $this->createAccessDeniedException();
+        }
         $form = $this->createForm(PaymentType::class, $payment);
         $form->handleRequest($request);
         $invoice = $payment -> getInvoice();
