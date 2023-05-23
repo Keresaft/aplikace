@@ -3,6 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\CostRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CostRepository::class)]
@@ -28,6 +31,20 @@ class Cost
 
     #[ORM\Column(length: 255)]
     private ?string $item = null;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTimeInterface $purchaseDate = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $purchasedFrom = null;
+
+    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'costs', cascade: ['persist'], fetch: "EAGER")]
+    private Collection $categories;
+
+    public function __construct()
+    {
+        $this->categories = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -90,6 +107,67 @@ class Cost
     public function setItem(string $item): self
     {
         $this->item = $item;
+
+        return $this;
+    }
+
+    public function getPurchaseDate(): ?\DateTimeInterface
+    {
+        return $this->purchaseDate;
+    }
+
+    public function setPurchaseDate(\DateTimeInterface $purchaseDate): self
+    {
+        $this->purchaseDate = $purchaseDate;
+
+        return $this;
+    }
+
+    public function getPurchasedFrom(): ?string
+    {
+        return $this->purchasedFrom;
+    }
+
+    public function setPurchasedFrom(?string $purchasedFrom): self
+    {
+        $this->purchasedFrom = $purchasedFrom;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Category>
+     */
+    public function getCategories(): Collection
+    {
+        return $this->categories;
+    }
+
+    public function setCategories(Collection $categories): self
+    {
+        /** @var Category $category */
+        foreach ($categories as $category) {
+            $category->addCost($this);
+        }
+        $this->categories = $categories;
+        return $this;
+    }
+
+    public function addCategory(Category $category): self
+    {
+        if (!$this->categories->contains($category)) {
+            $this->categories->add($category);
+            $category->addCost($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(Category $category): self
+    {
+        if ($this->categories->removeElement($category)) {
+            $category->removeCost($this);
+        }
 
         return $this;
     }

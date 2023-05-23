@@ -16,7 +16,7 @@
                     <p class="mt-2">{{ details.getCity() }}</p>
                     <p class="mt-2">{{ details.getzipCode() }}</p>
                     <p class="mt-2">{{ details.phoneNumber() }}</p>
-                    <form method="post" class="mt-4">
+                    <form action="{{ path('user_detail_edit', {'id': user.id}) }}" method="post" class="mt-4">
                         <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
                             Změnit
                         </button>
@@ -38,6 +38,19 @@
                 <div class="bg-white rounded-lg shadow-lg p-4 mt-2">
                     <p class="text-2xl font-semibold text-center">{{ customerCount }}</p>
                 </div>
+                {% set totalPrice = 0 %}
+
+                {% for customer in customers %}
+                    {% set invoices = customer.getInvoiceID() %}
+                    {% for invoice in invoices %}
+                        {% set price = invoice.getPrice() %}
+                        {% set totalPrice = totalPrice + price %}
+                    {% endfor %}
+                {% endfor %}
+                <h2 class="text-lg font-semibold pt-4">Celkovem vyfakturováno</h2>
+                <div class="bg-white rounded-lg shadow-lg p-4 mt-2">
+                    <p class="text-2xl font-semibold text-center">{{ totalPrice }} Kč</p>
+                </div>
             </div>
         </div>
 
@@ -45,7 +58,15 @@
             <div class="p-4">
                 <h2 class="text-lg font-semibold">Počet Nákladů</h2>
                 <div class="bg-white rounded-lg shadow-lg p-4 mt-2">
-                    <p class="text-2xl font-semibold text-center">{{ costsCount }}</p>
+                    <p class="text-2xl font-semibold text-center">{{ costsCount.count() }}</p>
+                </div>
+                {% set totalCost = 0 %}
+                {% for cost in costsCount %}
+                    {% set totalCost = totalCost + cost.getCost() %}
+                {% endfor %}
+                <h2 class="text-lg font-semibold pt-4">Celkové náklady</h2>
+                <div class="bg-white rounded-lg shadow-lg p-4 mt-2">
+                    <p class="text-2xl font-semibold text-center ">{{ totalCost }} Kč</p>
                 </div>
             </div>
         </div>

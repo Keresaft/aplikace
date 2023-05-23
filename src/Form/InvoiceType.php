@@ -4,8 +4,11 @@ namespace App\Form;
 
 use App\Entity\Invoice;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class InvoiceType extends AbstractType
 {
@@ -14,7 +17,7 @@ class InvoiceType extends AbstractType
         $builder
             ->add('dueDate')
             ->add('creationDate')
-            ->add('price')
+            ->add('price', NumberType::class)
             ->add('service')
         ;
     }

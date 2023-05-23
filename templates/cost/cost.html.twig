@@ -10,11 +10,41 @@
     <div class="flex flex-wrap justify-center">
         {% for cost in costs %}
             <div class="w-full max-w-sm bg-gray-100 rounded-lg shadow-lg mx-4 my-4">
-                <div class="p-4">
+                <div class="pt-4 pl-4">
                     <h3 class="text-lg font-semibold">{{ cost.getItem() }}</h3>
-                    <p class="mt-2">Č. dokladu: {{ cost.getDocumentNumber()}}</p>
-                    <p class="mt-2">Č. transakce: {{ cost.getTransactionNumber()}}</p>
+                    <p class="mt-2">Nakoupeno od: {{ cost.purchasedFrom() }}</p>
+                    <p class="mt-2">Č. dokladu: {{ cost.getDocumentNumber() }}</p>
+                    <p class="mt-2">Č. transakce: {{ cost.getTransactionNumber() }}</p>
                     <p class="mt-2">Cena: {{ cost.getCost() }} Kč</p>
+                    <p class="mt-2">Datum nákupu: {{ cost.getpurchaseDate()|date('Y-m-d') }}</p>
+                </div>
+                <div class="p-4">
+                    <form action="{{ path('cost_delete', {'id': cost.id}) }}" method="post" class="inline-block">
+                        <button type="submit"
+                                class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+                            Smazat
+                        </button>
+                    </form>
+                    <form action="{{ path('cost_edit', {'id': cost.id}) }}" method="post" class="inline-block">
+                        <button type="submit"
+                                class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                            Upravit
+                        </button>
+                    </form>
+                </div>
+                <div class="pb-4 pl-4">
+                    <form action="{{ path('cost_category', {'id': cost.id}) }}" method="post" class="inline-block">
+                        <button type="submit"
+                                class="bg-blue-900 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            Přidat kategorii
+                        </button>
+                    </form>
+                    <form method="post" class="inline-block">
+                        <button type="submit"
+                                class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                            Odebrat kategorii
+                        </button>
+                    </form>
                 </div>
             </div>
         {% endfor %}
@@ -22,7 +52,8 @@
 
 
     <div class="flex justify-center items-center">
-        <a href="{{ path('cost_new') }}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-10">Přidat náklad</a>
+        <a href="{{ path('cost_new') }}"
+           class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-10">Přidat náklad</a>
     </div>
 
 {% endblock %}

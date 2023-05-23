@@ -30,11 +30,23 @@
                     'attr': {'class': 'w-full p-2 border border-gray-300 rounded'}
                 }) }}
             </div>
+            <div class="mb-4">
+                {{ form_row(form.purchasedFrom, {
+                    'label': 'Nakoupeno od:',
+                    'attr': {'class': 'w-full p-2 border border-gray-300 rounded'}
+                }) }}
+            </div>
 
             <div class="mb-4">
                 {{ form_row(form.cost, {
                     'label': 'Cena:',
                     'attr': {'class': 'w-full p-2 border border-gray-300 rounded'}
+                }) }}
+            </div>
+            <div class="mb-4">
+                {{ form_row(form.purchaseDate, {
+                    'label': 'Datum nákupu:',
+                    'attr': {'class': 'w-full pt-2 border border-gray-300 rounded'}
                 }) }}
             </div>
 

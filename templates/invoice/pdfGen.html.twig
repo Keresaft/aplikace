@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+
+        table td, table th {
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .user-details, .customer-details {
+            width: 50%;
+        }
+
+        .service-details {
+            clear: both;
+        }
+        .last{
+            text-align: right;
+        }
+
+    </style>
+</head>
+<body>
+<div class="invoice">
+    <div class="head">
+        <p><strong>Faktura </strong>{{ invoice.id }}</p>
+    </div>
+
+    <table>
+        <tr>
+            <td class="user-details">
+                <h3>Dodavatel</h3>
+                <p><strong>Name: {{ invoice.userJson.name }}</strong></p>
+                <p>ICO:{{ invoice.userJson.ico }}</p>
+                <p>DICO: {{ invoice.userJson.dico }}</p>
+                <p>Address: {{ invoice.userJson.address }}</p>
+                <p>City: {{ invoice.userJson.city }}</p>
+                <p>Zip Code: {{ invoice.userJson.zipCode }}</p>
+                <p><strong>Phone Number:</strong> {{ invoice.userJson.phoneNumber }}</p>
+            </td>
+            <td class="customer-details">
+                <h3>Odběratel</h3>
+                <p><strong>Name:</strong> {{ invoice.customerJson.name }}</p>
+                <p>ICO: {{ invoice.customerJson.ico }}</p>
+                <p>DICO: {{ invoice.customerJson.dico }}</p>
+                <p>Address: {{ invoice.customerJson.address }}</p>
+                <p>City: {{ invoice.customerJson.city }}</p>
+                <p>Zip Code: {{ invoice.customerJson.zipCode }}</p>
+                <p><strong>Phone Number:</strong> {{ invoice.customerJson.phoneNumber }}</p>
+            </td>
+        </tr>
+        <tr class="service-details">
+            <td>
+                <p><strong>Datum vystavení:</strong> {{ invoice.creationDate|date('Y-m-d')}}</p>
+            </td>
+            <td>
+                <p><strong>Datum splatnosti:</strong> {{ invoice.dueDate|date('Y-m-d') }}</p>
+            </td>
+        </tr>
+        <tr class="service-details">
+            <td colspan="2" class="last">
+                <h3 style="text-align: left">Detail</h3>
+                <p><strong>Služba:</strong> {{ invoice.service }}</p>
+                <p><strong>Cena: {{ invoice.price }}</strong> CZK</p>
+            </td>
+        </tr>
+        <tr class="service-details">
+            <td colspan="2" >
+                <h3>Vystavil</h3>
+                <p><strong>Firma: </strong> {{ invoice.userJson.name }}</p>
+                <p><strong>Email:</strong> {{ invoice.getCustomerID().getUser().getUserIdentifier() }}</p>
+                <p>Zapsán v živnostenském rejstříku</p>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

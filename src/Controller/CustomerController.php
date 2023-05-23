@@ -53,10 +53,28 @@ class CustomerController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/delete', name: 'customer_delete', methods: ['POST'])]
+    #[Route('customer/delete/{id}', name: 'customer_delete', methods: ['POST'])]
     public function delete(Customer $customer): Response
     {
         $this->customerRepository->remove($customer, true);
         return $this->redirectToRoute('customer');
+    }
+
+    #[Route('/customer/edit/{id}', name: 'customer_edit')]
+    public function edit(Customer $customer, Request $request)
+    {
+        $form = $this->createForm(CustomerType::class, $customer);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var Customer $customer */
+            $customer = $form->getData();
+            $customer->setUser($this->getUser());
+            $this->customerRepository->save($customer, true);
+            return $this->redirectToRoute('lucky_number');
+        }
+        return $this->render('form.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 }

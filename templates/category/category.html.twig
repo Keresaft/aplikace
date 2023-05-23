@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Fakturační systém - Kategorie{% endblock %}
+
+{% block body %}
+    <div class="flex justify-between items-center">
+        <h1 class="text-3xl mb-4 text-center flex-grow mt-4">Kategorie</h1>
+    </div>
+
+    <div class="flex flex-wrap justify-center">
+        {% for category in categories %}
+            <div class="w-full max-w-sm bg-gray-100 rounded-lg shadow-lg mx-4 my-4">
+                <div class="pt-4 pl-4">
+                    <h3 class="text-lg font-semibold">Název kategorie: {{ category.getName() }}</h3>
+                </div>
+                <div class="p-4">
+                    <form action="{{ path('category_delete', {'id': category.id}) }}" method="post" class="inline-block">
+                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+                            Smazat
+                        </button>
+                    </form>
+                    <form action="{{ path('category_edit', {'id': category.id}) }}" method="post" class="inline-block">
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                            Upravit
+                        </button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+
+    <div class="flex justify-center items-center">
+        <a href="{{ path('category_new') }}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-10">Přidat kategorii</a>
+    </div>
+
+{% endblock %}
+

@@ -21,17 +21,21 @@ class UserController extends AbstractController
     }
 
     #[Route('/lucky/number', name: 'lucky_number')]
-    public function numberOfCustormers(): Response
+    public function numberOfCustomers(): Response
     {
         /** @var User $user */
         $user = $this->getUser();
         $customerCount = $user->getCustomerCount();
-        $costsCount = $user ->getCosts() ->count();
+        $customers = $user ->getCustomers();
+        $costsCount = $user ->getCosts();
+
         return $this->render('lucky/number.html.twig', [
             'customerCount' => $customerCount,
             'email' => $user -> getEmail(),
             'details' => $user ->getDetails(),
             'costsCount' => $costsCount,
+            'customers' => $customers,
+            'user' => $user,
         ]);
     }
 
@@ -39,6 +43,23 @@ class UserController extends AbstractController
     public function detail(Request $request)
     {
         $user = $this -> getUser();
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var User $user */
+            $user = $form->getData();
+            $this-> userRepository->save($user, true);
+            return $this->redirectToRoute('lucky_number');
+        }
+        return $this->render('form.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/user/detail/edit/{id}', name: 'user_detail_edit')]
+    public function detailEdit(User $user, Request $request)
+    {
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 

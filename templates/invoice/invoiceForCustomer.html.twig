@@ -3,21 +3,69 @@
 {% block title %}Fakturační systém - Faktury{% endblock %}
 
 {% block body %}
-    <div class="flex justify-between items-center">
-        <h1 class="text-3xl mb-4 text-center flex-grow mt-4">Faktury {{ customer }}</h1>
-    </div>
+<div class="flex justify-between items-center">
+    <h1 class="text-3xl mb-4 text-center flex-grow mt-4">Faktury {{ customer.getDetails().getName() }}</h1>
+</div>
 
-    <div class="flex flex-wrap justify-center">
-        {% for invoice in invoices %}
-            <div class="w-full max-w-sm bg-gray-100 rounded-lg shadow-lg mx-4 my-4">
-                <div class="p-4">
-                    <h3 class="text-lg font-semibold">{{ invoice.service() }}</h3>
-                    <p class="mt-2">Datum splatnosti: {{ invoice.dueDate()|date('Y-m-d') }}</p>
-                    <p class="mt-2">Datum vystavení: {{ invoice.creationDate()|date('Y-m-d') }}</p>
-                    <p class="mt-2">Částka: {{ invoice.price() }} Kč</p>
-                </div>
+<div class="flex flex-wrap justify-center">
+    {% for invoice in invoices %}
+        <div class="w-full max-w-sm bg-gray-100 rounded-lg shadow-lg mx-4 my-4">
+            <div class="p-4">
+                <h3 class="text-lg font-semibold">{{ invoice.service() }}</h3>
+                <p class="mt-2">Datum splatnosti: {{ invoice.dueDate()|date('Y-m-d') }}</p>
+                <p class="mt-2">Datum vystavení: {{ invoice.creationDate()|date('Y-m-d') }}</p>
+                <p class="mt-2">Částka: {{ invoice.price() }} Kč</p>
+                {% if invoice.isPaymentStatus()  %}
+                    <div class="bg-green-500 rounded flex justify-center mt-2">
+                        <span class="text-white">Zaplaceno</span>
+                    </div>
+                {% else %}
+                    <div class="bg-red-500 rounded flex justify-center mt-2">
+                        <span class="text-white">Nezaplaceno</span>
+                    </div>
+                {% endif %}
             </div>
-        {% endfor %}
+            <div>
+                <form action="{{ path('invoice_delete', {'id': invoice.id}) }}" method="post"
+                      class="inline-block pl-4 pb-4">
+                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+                        Smazat
+                    </button>
+                </form>
+                <form action="{{ path('invoice_edit', {'id': invoice.id}) }}" method="post" class="inline-block pb-4">
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                        Upravit
+                    </button>
+                </form>
+                <form action="{{ path('pdf_gen', {'id': invoice.id}) }}" method="post" class="inline-block pb-4">
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                        PDF
+                    </button>
+                </form>
+            </div>
+            <div class="pl-4">
+                <form action="{{ path('payment_list', {'id': invoice.id}) }}" method="post" class="inline-block pb-4">
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                        Zobrazit platby
+                    </button>
+                </form>
+                <form action="{{ path('payment_new', {'id': invoice.id}) }}" method="post" class="inline-block pb-4">
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                        Přidat platbu
+                    </button>
+                </form>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+<div class="flex justify-center items-center">
+    <div class="mt-4">
+        <form action="{{ path('invoice_new', {'id': customer.id}) }}" method="post" class="inline-block">
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-10">
+                Vytvořit faktury
+            </button>
+        </form>
     </div>
-{% endblock %}
+    </div>
+    {% endblock %}
 

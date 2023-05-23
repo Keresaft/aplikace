@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\InvoiceRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -20,8 +22,8 @@ class Invoice
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $creationDate = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $price = null;
+    #[ORM\Column]
+    private ?float $price = null;
 
     #[ORM\Column(length: 255)]
     private ?string $service = null;
@@ -29,6 +31,23 @@ class Invoice
     #[ORM\ManyToOne(inversedBy: 'invoiceID')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Customer $customerID = null;
+
+    #[ORM\Column]
+    private ?bool $paymentStatus = null;
+
+    #[ORM\OneToMany(mappedBy: 'invoice', targetEntity: Payment::class, orphanRemoval: true)]
+    private Collection $payments;
+
+    #[ORM\Column]
+    private array $customerJson = [];
+
+    #[ORM\Column]
+    private array $userJson = [];
+
+    public function __construct()
+    {
+        $this->payments = new ArrayCollection();
+    }
 
 
     public function getId(): ?int
@@ -60,12 +79,12 @@ class Invoice
         return $this;
     }
 
-    public function getPrice(): ?string
+    public function getPrice(): ?float
     {
         return $this->price;
     }
 
-    public function setPrice(string $price): self
+    public function setPrice(float $price): self
     {
         $this->price = $price;
 
@@ -92,6 +111,72 @@ class Invoice
     public function setCustomerID(?Customer $customerID): self
     {
         $this->customerID = $customerID;
+
+        return $this;
+    }
+
+    public function isPaymentStatus(): ?bool
+    {
+        return $this->paymentStatus;
+    }
+
+    public function setPaymentStatus(bool $paymentStatus): self
+    {
+        $this->paymentStatus = $paymentStatus;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Payment>
+     */
+    public function getPayments(): Collection
+    {
+        return $this->payments;
+    }
+
+    public function addPayment(Payment $payment): self
+    {
+        if (!$this->payments->contains($payment)) {
+            $this->payments->add($payment);
+            $payment->setInvoice($this);
+        }
+
+        return $this;
+    }
+
+    public function removePayment(Payment $payment): self
+    {
+        if ($this->payments->removeElement($payment)) {
+            // set the owning side to null (unless already changed)
+            if ($payment->getInvoice() === $this) {
+                $payment->setInvoice(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCustomerJson(): array
+    {
+        return $this->customerJson;
+    }
+
+    public function setCustomerJson(array $customerJson): self
+    {
+        $this->customerJson = $customerJson;
+
+        return $this;
+    }
+
+    public function getUserJson(): array
+    {
+        return $this->userJson;
+    }
+
+    public function setUserJson(array $userJson): self
+    {
+        $this->userJson = $userJson;
 
         return $this;
     }

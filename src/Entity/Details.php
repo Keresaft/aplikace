@@ -124,4 +124,21 @@ class Details
         return $this;
     }
 
+    public function toArray(): array
+    {
+        $data = [
+            'id' => $this->id,
+            'ico' => $this->ico,
+            'dico' => $this->dico,
+            'name' => $this->name,
+            'address' => $this->address,
+            'city' => $this->city,
+            'zipCode' => $this->zipCode,
+            'phoneNumber' => $this->phoneNumber,
+        ];
+
+        return $data;
+    }
+
+
 }
