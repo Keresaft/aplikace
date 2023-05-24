@@ -20,7 +20,7 @@ class CustomerController extends AbstractController
     {
     }
 
-    #[Route('/customer/new', name: 'customer_new')]
+    #[Route('/customer/new', name: 'customer_new', methods: ['POST'])]
     public function new(Request $request)
     {
         $customer = new Customer();
@@ -60,7 +60,7 @@ class CustomerController extends AbstractController
         return $this->redirectToRoute('customer');
     }
 
-    #[Route('/customer/edit/{id}', name: 'customer_edit')]
+    #[Route('/customer/edit/{id}', name: 'customer_edit', methods: ['POST'])]
     public function edit(Customer $customer, Request $request)
     {
         if($customer -> getUser() !== $this->getUser()){

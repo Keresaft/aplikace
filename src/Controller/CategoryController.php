@@ -11,14 +11,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_USER')]
 class CategoryController extends AbstractController
 {
     public function __construct(private readonly CategoryRepository $categoryRepository)
     {
     }
 
-    #[Route('/category/new', name: 'category_new')]
+    #[Route('/category/new', name: 'category_new', methods: ['POST'])]
     public function newCategory(Request $request)
     {
         $category = new Category();
@@ -57,7 +59,7 @@ class CategoryController extends AbstractController
         return $this -> redirectToRoute('category');
     }
 
-    #[Route('/category/edit/{id}', name: 'category_edit')]
+    #[Route('/category/edit/{id}', name: 'category_edit', methods: ['POST'])]
     public function editCategory(Category $category, Request $request)
     {
         if($category->getUser() !== $this->getUser()){

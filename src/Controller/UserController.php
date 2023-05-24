@@ -20,6 +20,7 @@ class UserController extends AbstractController
     {
     }
 
+
     #[Route('/lucky/number', name: 'lucky_number')]
     public function numberOfCustomers(): Response
     {
@@ -39,7 +40,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/user/detail', name: 'user_detail')]
+    #[Route('/user/detail', name: 'user_detail', methods: ['POST'])]
     public function detail(Request $request)
     {
         $user = $this -> getUser();
@@ -57,7 +58,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/user/detail/edit/{id}', name: 'user_detail_edit')]
+    #[Route('/user/detail/edit/{id}', name: 'user_detail_edit', methods: ['POST'])]
     public function detailEdit(User $user, Request $request)
     {
         if($user !== $this->getUser()){

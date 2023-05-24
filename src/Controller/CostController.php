@@ -8,12 +8,16 @@ use App\Entity\User;
 use App\Form\CategorySelectType;
 use App\Form\CostType;
 use App\Form\InvoiceType;
+use App\Repository\CategoryRepository;
 use App\Repository\CostRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_USER')]
 class CostController extends AbstractController
 {
     public function __construct(private readonly CostRepository $costRepository)
@@ -21,19 +25,37 @@ class CostController extends AbstractController
     }
 
     #[Route('/costs', name: 'costs')]
-    public function allCosts(): Response
+    public function allCosts(Request $request, EntityManagerInterface $entityManager): Response
     {
         /** @var User $user */
         $user = $this->getUser();
         /** @var Cost $costs */
         $costs = $user->getCosts();
+        $categoryId = $request ->query->get('category');
+
+        $categories = $user ->getCategories();
+
+        if (!empty($categoryId)) {
+            $category = $entityManager->getRepository(Category::class)->find($categoryId);
+            $filteredCosts = $costs->filter(function (Cost $cost) use ($category) {
+                return $cost->getCategories()->contains($category);
+            });
+
+            return $this->render('cost/cost.html.twig', [
+                'costs' => $filteredCosts,
+                'selectedCategory' => $category,
+                'categories' => $categories,
+            ]);
+        }
 
         return $this->render('cost/cost.html.twig', [
             'costs' => $costs,
+            'categories' => $categories,
+            'selectedCategory' => null,
         ]);
     }
 
-    #[Route('/cost/new', name: 'cost_new')]
+    #[Route('/cost/new', name: 'cost_new', methods: ['POST'])]
     public function newCost(Request $request)
     {
         $cost = new Cost();
@@ -59,7 +81,7 @@ class CostController extends AbstractController
         return $this->redirectToRoute('costs');
     }
 
-    #[Route('/cost/edit/{id}', name: 'cost_edit')]
+    #[Route('/cost/edit/{id}', name: 'cost_edit', methods: ['POST'])]
     public function editCost(Cost $cost, Request $request)
     {
         if($cost -> getUser()!== $this->getUser()){
@@ -80,7 +102,7 @@ class CostController extends AbstractController
         ]);
     }
 
-    #[Route('/cost/{id}/category', name: 'cost_category')]
+    #[Route('/cost/{id}/category', name: 'cost_category', methods: ['POST'])]
     public function costCategory(Cost $cost, Request $request)
     {
         if($cost ->getUser() !== $this->getUser()){
@@ -96,9 +118,6 @@ class CostController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var Cost $data */
             $data = $form->getData();
-//            foreach ($data->getCategories() as $category){
-//               $cost -> addCategory($category);
-//            }
             $cost ->setCategories($data->getCategories());
             $this->costRepository->save($cost, true);
             return $this->redirectToRoute('costs');

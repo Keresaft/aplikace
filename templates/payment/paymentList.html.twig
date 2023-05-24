@@ -30,8 +30,17 @@
     </div>
 
 
-    <div class="flex justify-center items-center">
-        <a href="{{ path('payment_new', {'id': invoice.id}) }}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-10">Přidat <platbu></platbu></a>
+    <div class="mt-4 flex flex-col items-center justify-center">
+        <form action="{{ path('payment_new', {'id': invoice.id}) }}" method="post" class="inline-block">
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-10">
+                Přidat platbu
+            </button>
+        </form>
+        <form action="{{ path('invoice_list', {'id': invoice.getCustomerID().getId()} ) }}" method="get" class="inline-block pt-2">
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-10">
+                Zpět
+            </button>
+        </form>
     </div>
 
 {% endblock %}
