@@ -31,6 +31,9 @@ class InvoiceController extends AbstractController
         if($customer -> getUser() !== $this->getUser()){
             throw $this->createAccessDeniedException();
         }
+        if(empty($customer->getUser()->getDetails())){
+            throw $this->createAccessDeniedException('Uživatel nemá nastavené fakturační údaje');
+        }
         $invoice = new Invoice();
         $form = $this->createForm(InvoiceType::class, $invoice);
         $form->handleRequest($request);
@@ -51,16 +54,33 @@ class InvoiceController extends AbstractController
     }
 
     #[Route('/invoice/list/{id}', name: 'invoice_list')]
-    public function listById(Customer $customer): Response
+    public function listById(Request $request, Customer $customer): Response
     {
         if($customer -> getUser() !== $this->getUser()){
             throw $this->createAccessDeniedException();
         }
+        $filter = $request->query->get('filter', 'all');
         /** @var Invoice $invoices */
         $invoices = $customer->getInvoiceID();
+        /** @var Invoice $filteredInvoices  */
+        $filteredInvoices;
+
+        if ($filter === 'paid') {
+            $filteredInvoices = $invoices->filter(function (Invoice $invoice) {
+                return $invoice->isPaymentStatus();
+            });
+        } elseif ($filter === 'unpaid') {
+            $filteredInvoices = $invoices->filter(function (Invoice $invoice) {
+                return !$invoice->isPaymentStatus();
+            });
+        } else {
+            $filteredInvoices = $invoices;
+        }
+
         return $this->render('invoice/invoiceForCustomer.html.twig', [
-            'invoices' => $invoices,
+            'invoices' => $filteredInvoices,
             'customer' => $customer,
+            'filter' => $filter,
         ]);
     }
 
@@ -97,6 +117,9 @@ class InvoiceController extends AbstractController
     {
         if($invoice->getCustomerID()->getUser() !== $this->getUser()){
             throw $this->createAccessDeniedException();
+        }
+        if(empty($invoice->getCustomerID()->getUser()->getDetails())){
+            throw $this->createAccessDeniedException('User details are not set.');
         }
         $html = $this->render('invoice/pdfGen.html.twig', [
             'invoice' => $invoice,

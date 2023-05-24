@@ -32,7 +32,7 @@ class CustomerController extends AbstractController
             $customer = $form->getData();
             $customer->setUser($this->getUser());
             $this->customerRepository->save($customer, true);
-            return $this->redirectToRoute('lucky_number');
+            return $this->redirectToRoute('customer');
         }
         return $this->render('form.html.twig', [
             'form' => $form->createView(),
@@ -74,7 +74,7 @@ class CustomerController extends AbstractController
             $customer = $form->getData();
             $customer->setUser($this->getUser());
             $this->customerRepository->save($customer, true);
-            return $this->redirectToRoute('lucky_number');
+            return $this->redirectToRoute('customer');
         }
         return $this->render('form.html.twig', [
             'form' => $form->createView(),

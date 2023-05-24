@@ -7,6 +7,24 @@
     <h1 class="text-3xl mb-4 text-center flex-grow mt-4">Faktury {{ customer.getDetails().getName() }}</h1>
 </div>
 
+    <div class="flex justify-center items-center mb-4">
+        <a href="{{ path('invoice_list', {'id': customer.id, 'filter': 'all'}) }}"
+           class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-2
+              {% if filter == 'all' %}bg-blue-600{% endif %}">
+            Všechny faktury
+        </a>
+        <a href="{{ path('invoice_list', {'id': customer.id, 'filter': 'paid'}) }}"
+           class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded mr-2
+              {% if filter == 'paid' %}bg-green-600{% endif %}">
+            Zaplacené faktury
+        </a>
+        <a href="{{ path('invoice_list', {'id': customer.id, 'filter': 'unpaid'}) }}"
+           class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded
+              {% if filter == 'unpaid' %}bg-red-600{% endif %}">
+            Nezaplacené faktury
+        </a>
+    </div>
+    
 <div class="flex flex-wrap justify-center">
     {% for invoice in invoices %}
         <div class="w-full max-w-sm bg-gray-100 rounded-lg shadow-lg mx-4 my-4">
