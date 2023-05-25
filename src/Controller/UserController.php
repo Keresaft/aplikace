@@ -8,6 +8,7 @@ use App\Form\CustomerType;
 use App\Form\UserType;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,13 +28,13 @@ class UserController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $customerCount = $user->getCustomerCount();
-        $customers = $user ->getCustomers();
-        $costsCount = $user ->getCosts();
+        $customers = $user->getCustomers();
+        $costsCount = $user->getCosts();
 
         return $this->render('lucky/number.html.twig', [
             'customerCount' => $customerCount,
-            'email' => $user -> getEmail(),
-            'details' => $user ->getDetails(),
+            'email' => $user->getEmail(),
+            'details' => $user->getDetails(),
             'costsCount' => $costsCount,
             'customers' => $customers,
             'user' => $user,
@@ -43,15 +44,19 @@ class UserController extends AbstractController
     #[Route('/user/detail', name: 'user_detail', methods: ['POST'])]
     public function detail(Request $request)
     {
-        $user = $this -> getUser();
+        $user = $this->getUser();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var User $user */
             $user = $form->getData();
-            $this-> userRepository->save($user, true);
-            return $this->redirectToRoute('lucky_number');
+            if (!empty($user->getDetails()->getBankCode())) {
+                $this->userRepository->save($user, true);
+                return $this->redirectToRoute('lucky_number');
+            } else {
+                $form->addError(new FormError('Uživatel musí mít vyplněné bankovní spojení.'));
+            }
         }
         return $this->render('form.html.twig', [
             'form' => $form->createView(),
@@ -61,7 +66,7 @@ class UserController extends AbstractController
     #[Route('/user/detail/edit/{id}', name: 'user_detail_edit', methods: ['POST'])]
     public function detailEdit(User $user, Request $request)
     {
-        if($user !== $this->getUser()){
+        if ($user !== $this->getUser()) {
             throw $this->createAccessDeniedException();
         }
         $form = $this->createForm(UserType::class, $user);
@@ -70,7 +75,7 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var User $user */
             $user = $form->getData();
-            $this-> userRepository->save($user, true);
+            $this->userRepository->save($user, true);
             return $this->redirectToRoute('lucky_number');
         }
         return $this->render('form.html.twig', [

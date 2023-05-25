@@ -68,6 +68,10 @@ class DetailsType extends AbstractType
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Zadejte PSČ',
+                    ]),
+                    new Regex([
+                        'pattern' => '/^\d{5}$/',
+                        'message' => 'PSČ musí obsahvat 5 čísel',
                     ])
                 ]
             ])
@@ -78,7 +82,16 @@ class DetailsType extends AbstractType
                         'message' => 'Telefonní číslo může obsahovat pouze číslice a může začínat "+"',
                     ])
                 ]
-            ]);
+            ])
+            ->add('bankCode', TextType::class, ['required' => false,
+                'constraints' => [
+                    new Regex([
+                        'pattern' => '/^(([0-9]{0,6})-)?([0-9]{2,10})\/([0-9]{4})$/',
+                        'message' => 'Bankovní účet musí být ve správném tvaru.',
+                    ])
+                ]
+            ])
+        ;
     }
 
 

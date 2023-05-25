@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Form\CustomerType;
 use App\Repository\CustomerRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,13 +27,17 @@ class CustomerController extends AbstractController
         $customer = new Customer();
         $form = $this->createForm(CustomerType::class, $customer);
         $form->handleRequest($request);
-
+        /** @var User $user */
+        $user = $this ->getUser();
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var Customer $customer */
-            $customer = $form->getData();
-            $customer->setUser($this->getUser());
-            $this->customerRepository->save($customer, true);
-            return $this->redirectToRoute('customer');
+            if (!($user->getDetails() == null)){
+                /** @var Customer $customer */
+                $customer = $form->getData();
+                $customer->setUser($this->getUser());
+                $this->customerRepository->save($customer, true);
+                return $this->redirectToRoute('customer');
+            }
+            $form->addError(new FormError('Uživatel musí mít nastavené fakturační údaje'));
         }
         return $this->render('form.html.twig', [
             'form' => $form->createView(),

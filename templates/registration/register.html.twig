@@ -15,12 +15,18 @@
             </div>
 
             <div class="mb-4">
-                {{ form_row(registrationForm.plainPassword, {
-                    'label': 'Password',
+                {{ form_row(registrationForm.plainPassword.first, {
+                    'label': 'Heslo',
                     'attr': {'class': 'w-full p-2 border border-gray-300 rounded'}
                 }) }}
             </div>
 
+            <div class="mb-4">
+                {{ form_row(registrationForm.plainPassword.second, {
+                    'label': 'Heslo znovu',
+                    'attr': {'class': 'w-full p-2 border border-gray-300 rounded'}
+                }) }}
+            </div>
 
             <div class="mb-4">
                 {{ form_row(registrationForm.agreeTerms, {
@@ -31,7 +37,7 @@
 
             <div class="text-center">
                 <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
-                    Register
+                    Registrovat se
                 </button>
             </div>
             {{ form_end(registrationForm) }}

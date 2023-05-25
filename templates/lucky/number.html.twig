@@ -10,12 +10,13 @@
                 <div class="p-4">
                     <h2 class="text-lg font-semibold">Fakturační údaje</h2>
                     <h3 class="text-lg font-semibold">{{ details.getName() }}</h3>
-                    <p class="mt-2">{{ details.getIco() }}</p>
-                    <p class="mt-2">{{ details.getDico() }}</p>
-                    <p class="mt-2">{{ details.getAddress() }}</p>
-                    <p class="mt-2">{{ details.getCity() }}</p>
-                    <p class="mt-2">{{ details.getzipCode() }}</p>
-                    <p class="mt-2">{{ details.phoneNumber() }}</p>
+                    <p class="mt-2">ico: {{ details.getIco() }}</p>
+                    <p class="mt-2">dic: {{ details.getDico() }}</p>
+                    <p class="mt-2">adresa: {{ details.getAddress() }}</p>
+                    <p class="mt-2">město: {{ details.getCity() }}</p>
+                    <p class="mt-2">psč: {{ details.getzipCode() }}</p>
+                    <p class="mt-2">tel. číslo: {{ details.phoneNumber() }}</p>
+                    <p class="mt-2">bankovní spojení: {{ details.bankCode() }}</p>
                     <form action="{{ path('user_detail_edit', {'id': user.id}) }}" method="post" class="mt-4">
                         <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
                             Změnit
@@ -67,6 +68,26 @@
                 <h2 class="text-lg font-semibold pt-4">Celkové náklady</h2>
                 <div class="bg-white rounded-lg shadow-lg p-4 mt-2">
                     <p class="text-2xl font-semibold text-center ">{{ totalCost }} Kč</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full max-w-sm bg-gray-100 rounded-lg shadow-lg ml-4">
+            <div class="p-4">
+                <h2 class="text-lg font-semibold">Celkové příjmy</h2>
+
+                {% set totalPaid = 0 %}
+                {% for customer in customers %}
+                    {% set invoices = customer.getInvoiceID() %}
+                    {% for invoice in invoices %}
+                        {% set payments = invoice.getPayments %}
+                        {% for payment in payments %}
+                            {% set totalPaid = totalPaid + payment.getPaymentAmount() %}
+                        {% endfor %}
+                {% endfor %}
+                {% endfor %}
+                <div class="bg-white rounded-lg shadow-lg p-4 mt-2">
+                    <p class="text-2xl font-semibold text-center">{{ totalPaid }} Kč</p>
                 </div>
             </div>
         </div>

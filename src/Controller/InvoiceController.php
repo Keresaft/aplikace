@@ -9,6 +9,7 @@ use App\Form\CustomerType;
 use App\Form\InvoiceType;
 use App\Repository\InvoiceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,13 +26,24 @@ class InvoiceController extends AbstractController
     {
     }
 
+    private function isDateCorrect($dueDate, $creationDate)
+    {
+        if ($dueDate > $creationDate) {
+            return true;
+        } elseif ($dueDate < $creationDate) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     #[Route('/invoice/new/{id}', name: 'invoice_new', methods: ['POST'])]
     public function new(Request $request, Customer $customer)
     {
-        if($customer -> getUser() !== $this->getUser()){
+        if ($customer->getUser() !== $this->getUser()) {
             throw $this->createAccessDeniedException();
         }
-        if(empty($customer->getUser()->getDetails())){
+        if (empty($customer->getUser()->getDetails())) {
             throw $this->createAccessDeniedException('Uživatel nemá nastavené fakturační údaje');
         }
         $invoice = new Invoice();
@@ -41,12 +53,16 @@ class InvoiceController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var Invoice $invoice */
             $invoice = $form->getData();
-            $invoice->setCustomerID($customer);
-            $invoice->setPaymentStatus(false);
-            $invoice->setCustomerJson($customer->getDetails()->toArray());
-            $invoice->setUserJson($customer->getUser()->getDetails()->toArray());
-            $this->invoiceRepository->save($invoice, true);
-            return $this->redirectToRoute('invoice_list', ['id' => $customer->getId()]);
+            if ($this->isDateCorrect($invoice->getDueDate(), $invoice->getCreationDate())) {
+                $invoice->setCustomerID($customer);
+                $invoice->setPaymentStatus(false);
+                $invoice->setCustomerJson($customer->getDetails()->toArray());
+                $invoice->setUserJson($customer->getUser()->getDetails()->toArray());
+                $this->invoiceRepository->save($invoice, true);
+                return $this->redirectToRoute('invoice_list', ['id' => $customer->getId()]);
+            } else {
+                $form->addError(new FormError('Datum splatnosti musí být větší než datum vytvoření '));
+            }
         }
         return $this->render('invoice/newInvoice.html.twig', [
             'form' => $form->createView(),
@@ -56,13 +72,13 @@ class InvoiceController extends AbstractController
     #[Route('/invoice/list/{id}', name: 'invoice_list')]
     public function listById(Request $request, Customer $customer): Response
     {
-        if($customer -> getUser() !== $this->getUser()){
+        if ($customer->getUser() !== $this->getUser()) {
             throw $this->createAccessDeniedException();
         }
         $filter = $request->query->get('filter', 'all');
         /** @var Invoice $invoices */
         $invoices = $customer->getInvoiceID();
-        /** @var Invoice $filteredInvoices  */
+        /** @var Invoice $filteredInvoices */
         $filteredInvoices;
 
         if ($filter === 'paid') {
@@ -85,52 +101,59 @@ class InvoiceController extends AbstractController
     }
 
     #[Route('/invoice/delete/{id}', name: 'invoice_delete', methods: ['POST'])]
-    public function deleteInvoice(Invoice $invoice, Request $request):Response
+    public function deleteInvoice(Invoice $invoice, Request $request): Response
     {
-        $this -> invoiceRepository -> remove($invoice, true);
+        $this->invoiceRepository->remove($invoice, true);
         return new RedirectResponse($request->headers->get('referer'));
     }
 
     #[Route('/invoice/edit/{id}', name: 'invoice_edit', methods: ['POST'])]
     public function edit(Invoice $invoice, Request $request)
     {
-        if($invoice->getCustomerID()->getUser() !== $this->getUser()){
+        if ($invoice->getCustomerID()->getUser() !== $this->getUser()) {
             throw $this->createAccessDeniedException();
         }
         $form = $this->createForm(InvoiceType::class, $invoice);
         $form->handleRequest($request);
-        $customer = $invoice -> getCustomerID();
+        $customer = $invoice->getCustomerID();
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var Invoice $invoice */
             $invoice = $form->getData();
-            $invoice->setCustomerID($customer);
-            $this->invoiceRepository->save($invoice, true);
-            return $this->redirectToRoute('invoice_list', ['id' => $customer->getId()]);
+            if ($this->isDateCorrect($invoice->getDueDate(), $invoice->getCreationDate())) {
+
+                $invoice->setCustomerID($customer);
+                $this->invoiceRepository->save($invoice, true);
+                return $this->redirectToRoute('invoice_list', ['id' => $customer->getId()]);
+            } else {
+                $form->addError(new FormError('Datum splatnosti musí být větší než datum vytvoření '));
+            }
         }
         return $this->render('invoice/newInvoice.html.twig', [
             'form' => $form->createView(),
         ]);
     }
 
+
     #[Route('/invoice/gen/{id}', name: 'pdf_gen')]
-    public function genPdf(Invoice $invoice):Response
+    public function genPdf(Invoice $invoice)
     {
-        if($invoice->getCustomerID()->getUser() !== $this->getUser()){
+        if ($invoice->getCustomerID()->getUser() !== $this->getUser()) {
             throw $this->createAccessDeniedException();
         }
-        if(empty($invoice->getCustomerID()->getUser()->getDetails())){
+        if (empty($invoice->getCustomerID()->getUser()->getDetails())) {
             throw $this->createAccessDeniedException('User details are not set.');
         }
-        $html = $this->render('invoice/pdfGen.html.twig', [
+        $html = $this->renderView('invoice/pdfGen.html.twig', [
             'invoice' => $invoice,
         ]);
-        $html = mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8');
-        $options = new Options();
-        $options->set('isHtml5ParserEnabled', true);
-        $options->set('defaultFont', 'Arial');
-        $options->set('defaultEncoding', 'UTF-8');
-        $dompdf = new Dompdf($options);
-        $dompdf ->loadHtml($html);
+//        $options = new Options();
+//        $options->set('isHtml5ParserEnabled', true);
+//        $options->set('defaultEncoding', 'UTF-8');
+//        $options->setDefaultFont('Verdana');
+
+
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml(utf8_decode($html), 'UTF-8');
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
         $response = new Response();

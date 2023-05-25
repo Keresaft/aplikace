@@ -34,6 +34,9 @@ class Details
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $phoneNumber = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $bankCode = null;
+
 
     public function getId(): ?int
     {
@@ -135,9 +138,22 @@ class Details
             'city' => $this->city,
             'zipCode' => $this->zipCode,
             'phoneNumber' => $this->phoneNumber,
+            'bankCode' => $this -> bankCode,
         ];
 
         return $data;
+    }
+
+    public function getBankCode(): ?string
+    {
+        return $this->bankCode;
+    }
+
+    public function setBankCode(?string $bankCode): self
+    {
+        $this->bankCode = $bankCode;
+
+        return $this;
     }
 
 
